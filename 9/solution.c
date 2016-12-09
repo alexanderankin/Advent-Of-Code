@@ -7,7 +7,6 @@
 // #include <>
 
 void process_token(void);
-// void process_chunk(char *, int);
 
 unsigned long long sum = 0;
 FILE *file;
@@ -35,13 +34,15 @@ int main(int argc, char const *argv[])
     }
   }
   printf("The sum is %llu\n", sum);
+
+  fclose(file);
   return 0;
 }
 
 void process_token(void)
 {
   int c;
-  char buffer[10];
+  static char buffer[10];
   // int buffer_pointer = 0;
 
   int i;
@@ -80,77 +81,10 @@ void process_token(void)
   {
     for (int ii = quantifier - 1; ii > -1; ii--)
     {
-      printf("Un-getting %c\n", argument_of_token[ii]);
+      // printf("Un-getting %c\n", argument_of_token[ii]);
       ungetc(argument_of_token[ii], file);
     }
   }
 
-  /*for (i = 0; i < 10; ++i)
-  {
-    if ((c = getc(file)) == 'x')
-    {
-      break;
-    }
-    buffer[i] = c;
-  }
-  printf("quantifier: %d\n", quantifier);*/
-
+  free(argument_of_token);
 }
-
-// void process_chunk(char *chunk, int length)
-// {
-//   char buf[10];
-//   int buf_pointer;
-
-//   int i;
-//   for (i = 0; i < length; ++i)
-//   {
-//     if (isalpha(chunk[i]))
-//     {
-//       sum++;
-//     }
-//     else if (chunk[i] == '(')
-//     {
-//       buf_pointer = 0;
-//       while ((buf[buf_pointer++] = chunk[i++]) != 'x')
-//         ;
-//       buf_pointer--;
-//       break;
-//     }
-//   }
-
-//   int quantifier = atoi(strndup(buf, buf_pointer));
-//   printf("quantifier: %d\n", quantifier);
-
-//   buf_pointer = 0;
-//   while ((buf[buf_pointer++] = chunk[i++]) != ')')
-//     ;
-//   buf_pointer--;
-
-//   int multiplier = atoi(strndup(buf, buf_pointer));
-//   printf("multiplier: %d\n", multiplier);
-
-//   char *argument = malloc(quantifier);
-//   int j;
-//   for (j = 0; j < quantifier; ++j)
-//   {
-//     argument[j] = chunk[i++];
-//   }
-
-//   char *generated = malloc(multiplier * quantifier);
-//   int generated_pointer = 0;
-//   for (int j = 0; j < multiplier; ++j)
-//   {
-//     for (i = 0; i < quantifier; ++i)
-//     {
-//       generated[generated_pointer++] = argument[i];
-//     }
-//   }
-
-//   // for (; i < length; ++i)
-//   // {
-//     // 
-//   // }
-// }
-
-// void process_chunk_token(char *, length);
