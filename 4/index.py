@@ -117,21 +117,24 @@ def run_solution(line):
     return solution.getSectorID()
   return 0
 
-argument_array = sys.argv
-if len(argument_array) is not 2:
-  print("Usage: " + argument_array[0] + " <input | '-stdin' >")
-  exit(1)
+def main():
+  argument_array = sys.argv
+  if len(argument_array) is not 2:
+    print("Usage: " + argument_array[0] + " <input | '-stdin' >")
+    exit(1)
 
 
-if argument_array[1] is '-stdin':
-  usingstdin = True
-else:
-  usingstdin = False
-  file = argument_array[1]
+  if argument_array[1] is '-stdin':
+    usingstdin = True
+  else:
+    usingstdin = False
+    file = argument_array[1]
 
-if not usingstdin:
-  with open(file) as file_handle:
-    process_input(file_handle)
-else:
-  process_input(sys.stdin)
+  if not usingstdin:
+    with open(file) as file_handle:
+      process_input(file_handle)
+  else:
+    process_input(sys.stdin)
 
+if __name__ == '__main__':
+  main()
