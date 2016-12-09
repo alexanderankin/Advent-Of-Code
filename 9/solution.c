@@ -3,21 +3,27 @@
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
 // #include <>
 
 void process_token(void);
 // void process_chunk(char *, int);
 
-char global_buffer[1024*1024];
-
 unsigned long long sum = 0;
+FILE *file;
 int main(int argc, char const *argv[])
 {
   int c;
 
-  setbuf( stdin, global_buffer);
+  file = fopen("./inputFile", "r");
+  if (file == NULL) {
+    printf("oh no\n");
+    printf("%s\n", strerror(errno));
 
-  while ((c = getc(stdin)) != EOF) {
+    return 1;
+  }
+
+  while ((c = getc(file)) != EOF) {
     printf(" (ch:%c) ", c);
     if (isalpha(c))
     {
@@ -41,7 +47,7 @@ void process_token(void)
   int i;
   for (i = 0; i < 10; ++i)
   {
-    if ((c = getc(stdin)) == 'x')
+    if ((c = getc(file)) == 'x')
     {
       break;
     }
@@ -53,7 +59,7 @@ void process_token(void)
 
   for (i = 0; i < 10; ++i)
   {
-    if ((c = getc(stdin)) == ')')
+    if ((c = getc(file)) == ')')
     {
       break;
     }
@@ -67,21 +73,21 @@ void process_token(void)
 
   for (i = 0; i < quantifier; ++i)
   {
-    argument_of_token[i] = getc(stdin);
+    argument_of_token[i] = getc(file);
   }
 
   for (i = 0; i < multiplier; ++i)
   {
-    for (int ii = 0; ii < quantifier; ++ii)
+    for (int ii = quantifier - 1; ii > -1; ii--)
     {
       printf("Un-getting %c\n", argument_of_token[ii]);
-      ungetc(argument_of_token[ii], stdin);
+      ungetc(argument_of_token[ii], file);
     }
   }
 
   /*for (i = 0; i < 10; ++i)
   {
-    if ((c = getc(stdin)) == 'x')
+    if ((c = getc(file)) == 'x')
     {
       break;
     }
