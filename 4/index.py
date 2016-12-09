@@ -124,7 +124,7 @@ def main():
     exit(1)
 
 
-  if argument_array[1] is '-stdin':
+  if argument_array[1] == '-stdin':
     usingstdin = True
   else:
     usingstdin = False
