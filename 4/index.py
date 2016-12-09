@@ -113,6 +113,7 @@ def process_input(file_handle):
 solution = Solution()
 def run_solution(line):
   solution.giveInput(line)
+  print(solution.decrypt())
   if solution.isRealRoom():
     return solution.getSectorID()
   return 0
