@@ -28,7 +28,7 @@ cases = [
   }
 ]
 
-def test():
+def test_part_one():
   sol = Solution()
   for case in cases:
     sol.giveInput(case['input'])
@@ -37,5 +37,12 @@ def test():
     assert(sol.getChecksum() == case['sum'])
     print("assertions passed for " + str(case['input']))
 
+def test_part_two():
+  sol = Solution()
+  sol.giveInput("qzmt-zixmtkozy-ivhz-343")
+  print(sol.decrypt())
+  # assert(sol.decrypt() == "very encrypted name")
+
+
 if __name__ == '__main__':
-  test()
+  test_part_two()

@@ -78,7 +78,7 @@ class Solution(object):
 
   def getSectorID(self):
     last_dash = 0
-    end_of_si = 0 # end_of_sector_id
+    end_of_si = len(self.input) # end_of_sector_id
     for x in range(len(self.input)):
       if self.input[x] == "-":
         last_dash = x
@@ -89,19 +89,19 @@ class Solution(object):
     # print(self.input[last_dash + 1:end_of_si])
     return int((self.input[last_dash + 1:end_of_si]))
 
-
-# sol = Solution()
-# sol.giveInput("aaaaa-bbb-z-y-x-123[abxyz]")
-# sol.giveInput("a-b-c-d-e-f-g-h-987[abcde]")
-# sol.giveInput("not-a-real-room-404[oarel]")
-# sol.giveInput("totally-real-room-200[decoy]")
-# valid = sol.isRealRoom()
-# print(valid)
-# sol.getSectorID()
-# chks = sol.getChecksum()
-# print(chks)
-
-# exit(0)
+  def decrypt(self):
+    char_array = list(self.input)
+    for i in range(len(char_array)):
+      if char_array[i] == "-":
+        char_array[i] = " "
+      elif char_array[i].isalpha():
+        shift = self.getSectorID()
+        oldval = ord(char_array[i]) - ord("a")
+        newval = (oldval + shift) % 26 + ord("a")
+        char_array[i] = chr(newval)
+      elif char_array[i] == "[":
+        break
+    return ''.join(char_array)
 
 def process_input(file_handle):
   sum = 0
