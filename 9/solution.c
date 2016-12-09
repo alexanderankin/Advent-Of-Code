@@ -23,14 +23,15 @@ int main(int argc, char const *argv[])
   }
 
   while ((c = getc(file)) != EOF) {
-    printf(" (ch:%c) ", c);
+    // printf(" (ch:%c) ", c);
     if (isalpha(c))
     {
       sum++;
     } else if (c == '(')
     {
-      printf("\n");
+      // printf("\n");
       process_token();   
+      printf("sum is now %llu\n", sum);
     }
   }
   printf("The sum is %llu\n", sum);
@@ -42,7 +43,7 @@ int main(int argc, char const *argv[])
 void process_token(void)
 {
   int c;
-  static char buffer[10];
+  char *buffer = malloc(10);
   // int buffer_pointer = 0;
 
   int i;
@@ -55,8 +56,10 @@ void process_token(void)
     buffer[i] = c;
   }
 
-  int quantifier = atoi(strndup(buffer, i));
-  printf("quantifier: %d\n", quantifier);
+  char *temp = malloc(i);
+  int quantifier = atoi((temp = strndup(buffer, i)));
+  free(temp);
+  // printf("quantifier: %d\n", quantifier);
 
   for (i = 0; i < 10; ++i)
   {
@@ -67,8 +70,11 @@ void process_token(void)
     buffer[i] = c;
   }
 
+  temp = malloc(i);
   int multiplier = atoi(strndup(buffer, i));
-  printf("multiplier: %d\n", multiplier);
+  free(temp);
+  // printf("multiplier: %d\n", multiplier);
+  free(buffer);
 
   char *argument_of_token = malloc(quantifier);
 
