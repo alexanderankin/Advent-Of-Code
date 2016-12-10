@@ -7,6 +7,8 @@
 
 #include "count_string.h"
 
+static int static_i = 3;
+
 static int atoin(char *, int, int);
 int count_string(char *string, int length, int offset)
 {
@@ -22,7 +24,7 @@ int count_string(char *string, int length, int offset)
 
   while((string[i] != '(') && i < (length + offset))
   {
-    // printf("counting %c at %d\n", string[i], i);
+    printf("counting %4c at %d (i%d, l%d, f%d\n", string[i], i, i, length, offset);
     result++;
     i++;
   }
@@ -39,7 +41,7 @@ int count_string(char *string, int length, int offset)
   /*printf("index qend %d has char %c\n", i, string[i]);*/
 
   int quantifier = atoin(string, quantifier_start, i);
-  // printf("quantifier is %d\n", quantifier);
+  printf("quantifier is %d\n", quantifier);
 
   multiplier_start = i + 1;
   // printf("mstart %d has char %c\n", multiplier_start, string[multiplier_start]);
@@ -49,11 +51,29 @@ int count_string(char *string, int length, int offset)
   i += 1;
   // printf("multiplier_start %d, i %d cat i %c\n", multiplier_start, i, string[i]);
   int multiplier = atoin(string, multiplier_start, i + offset);
-  // printf("multiplier is %d\n", multiplier);
+  printf("multiplier is %d\n", multiplier);
 
   for (int j = 0; j < multiplier; ++j)
   {
+    // printf("string is %s, string[i] %c%c, qer %d\n", string, string[i], string[i+1], quantifier);
     result += count_string(string, quantifier, i);
+  }
+
+  /** experimental */
+  // for (; i < length; ++i)
+  // {
+  //   printf("%c", string[i]);
+  // }
+  // printf("\n");
+  // printf("%d\n", quantifier);
+  // if (static_i-- > -1)
+  if (length - i + quantifier > 0)
+  {
+    // printf("length - i + quantifier: %d, i: %d\n", length - i + quantifier, i);
+    int temp;
+    printf("result %d\n", result);
+    result += (temp = count_string(string, length - i + quantifier, i + quantifier));
+    printf("temp %d, from s%s, l%d o%d\n", temp, string, length - i + quantifier, i + quantifier);
   }
 
   return result;
@@ -76,13 +96,3 @@ static int atoin(char *string, int start, int end)
 
   return result;
 }
-
-// int main(int argc, char const *argv[])
-// {
-  // int result = count_string("(27x12)(20x12)(13x14)(7x10)(1x12)A", strlen("(27x12)(20x12)(13x14)(7x10)(1x12)A"), 0);
-  // int result = count_string("X(8x2)(3x3)ABCY", strlen("X(8x2)(3x3)ABCY"), 0);
-  // int result = count_string("XYZ", strlen("XYZ"), 0);
-  // int result = atoin("(3x3)XYZ", 3, 4);
-  // printf("result: %d\n", result);
-  // return 0;
-// }
