@@ -6,6 +6,8 @@
 #include <errno.h>
 // #include <>
 
+#include "count_string.h"
+
 void process_token(void);
 
 unsigned long long sum = 0;
@@ -59,7 +61,7 @@ void process_token(void)
   char *temp = malloc(i);
   int quantifier = atoi((temp = strndup(buffer, i)));
   free(temp);
-  // printf("quantifier: %d\n", quantifier);
+  printf("quantifier: %d\n", quantifier);
 
   for (i = 0; i < 10; ++i)
   {
@@ -73,7 +75,7 @@ void process_token(void)
   temp = malloc(i);
   int multiplier = atoi(strndup(buffer, i));
   free(temp);
-  // printf("multiplier: %d\n", multiplier);
+  printf("multiplier: %d\n", multiplier);
   free(buffer);
 
   char *argument_of_token = malloc(quantifier);
@@ -85,11 +87,8 @@ void process_token(void)
 
   for (i = 0; i < multiplier; ++i)
   {
-    for (int ii = quantifier - 1; ii > -1; ii--)
-    {
-      // printf("Un-getting %c\n", argument_of_token[ii]);
-      ungetc(argument_of_token[ii], file);
-    }
+    printf("argument_of_token: %s\n", argument_of_token);
+    sum += count_string(argument_of_token, quantifier, 0);
   }
 
   free(argument_of_token);
