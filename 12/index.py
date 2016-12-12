@@ -38,7 +38,28 @@ class Instruction(object):
       return 1
 
     elif (self.parts[0] == 'jnz'):
-      if registers[self.parts[1]] != 0:
+      self.parts[1] = str(self.parts[1])
+      if self.parts[1].isdigit():
+        if int(self.parts[1]) == 0:
+          return int(self.parts[2])
+        else:
+          return 1
+      else:
+        # print("here")
+        # print(type(self.parts[1]))
+        # print(self.parts[1])
+        if registers[self.parts[1]] != 0:
+          return int(self.parts[2])
+        else:
+          return 1
+        
+
+      if registers[self.parts[1]].isalpha():
+        if registers[self.parts[1]] != 0:
+          return int(self.parts[2])
+        else:
+          return 1
+      elif self.parts[1] == 0:
         return int(self.parts[2])
       else:
         return 1
@@ -89,7 +110,8 @@ def run_file(file_location):
 
   code_pointer = 0
   while code_pointer < len(instructions):
-    print("On code_pointer: %d, at instruction: %s" % (code_pointer, instructions[code_pointer].line))
+    print("On code_pointer: %d, at instruction: %-10s." % \
+      (code_pointer, instructions[code_pointer].line.strip()))
     code_pointer += instructions[code_pointer].run(r)
   
   r.print_state()
