@@ -104,6 +104,13 @@ class AsmbunnyRegisters(object):
     return ("Registers < a:[%s], b:[%s], c:[%s], d:[%s]>"
       % (self.a, self.b, self.c, self.d))
 
+import sys
+def getRegistersInstance():
+  r = AsmbunnyRegisters()
+  if 'parttwo' in sys.argv:
+    r.c = 1
+  return r
+
 def run_file(file_location):
   instructions = []
   with open(file_location) as testfile:
@@ -111,7 +118,7 @@ def run_file(file_location):
       instructions.append(Instruction(line))
     testfile.close()
 
-  r = AsmbunnyRegisters()
+  r = getRegistersInstance()
 
   code_pointer = 0
   while code_pointer < len(instructions):
