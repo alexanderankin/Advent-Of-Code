@@ -42,7 +42,10 @@ def decInstructionTest():
   pass
 def jnzInstructionTest():
   """ Tests the instruction jnz"""
-  pass
+  r = AsmbunnyRegisters();
+  i = Instruction("jnz 0 4")
+  print(i.run(r))
+  # assert(i.run(r) == 4)
 
 
 def instructionTest():
@@ -66,7 +69,8 @@ def main():
   # cpyInstructionTest()
   # incInstructionTest()
   # decInstructionTest()
-  testcase('./test')
+  jnzInstructionTest()
+  # testcase('./test')
 
 
 

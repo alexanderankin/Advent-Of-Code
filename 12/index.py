@@ -41,9 +41,9 @@ class Instruction(object):
       self.parts[1] = str(self.parts[1])
       if self.parts[1].isdigit():
         if int(self.parts[1]) == 0:
-          return int(self.parts[2])
-        else:
           return 1
+        else:
+          return int(self.parts[2])
       else:
         # print("here")
         # print(type(self.parts[1]))
@@ -100,18 +100,23 @@ class AsmbunnyRegisters(object):
     print ("Registers < a:[%s], b:[%s], c:[%s], d:[%s]>"
       % (self.a, self.b, self.c, self.d))
 
+  def string_state(self):
+    return ("Registers < a:[%s], b:[%s], c:[%s], d:[%s]>"
+      % (self.a, self.b, self.c, self.d))
+
 def run_file(file_location):
   instructions = []
   with open(file_location) as testfile:
     for line in testfile:
       instructions.append(Instruction(line))
+    testfile.close()
 
   r = AsmbunnyRegisters()
 
   code_pointer = 0
   while code_pointer < len(instructions):
-    print("On code_pointer: %d, at instruction: %-10s." % \
-      (code_pointer, instructions[code_pointer].line.strip()))
+    print("On code_pointer: %d, at instruction: %-10s. s: %s" % \
+      (code_pointer, instructions[code_pointer].line.strip(), r.string_state()))
     code_pointer += instructions[code_pointer].run(r)
   
   r.print_state()
