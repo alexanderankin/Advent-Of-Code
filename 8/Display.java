@@ -32,6 +32,19 @@ public class Display {
     return sb.toString();
   }
 
+  public String cleanToString() {
+    StringBuilder sb = new StringBuilder();
+    for (boolean row[] : this.pixels) {
+      for (boolean col : row) {
+        sb.append(col ? '#' : ' ');
+      }
+      sb.append('\n');
+    }
+    sb.append('\n');
+
+    return sb.toString();
+  }
+
   public void rotateRow(int row_num, int length) {
     boolean row[] = this.pixels[row_num];
     row = rotateBooleanArray(row, length);
@@ -62,5 +75,19 @@ public class Display {
     for (int i = 0; i < this.pixels.length; i++) {
       this.pixels[((i + n) % this.pixels.length)][col_num] = oldcol[i];
     }
+  }
+
+  public int getPixelOnCount() {
+    int count = 0;
+
+    for (boolean[] row : this.pixels) {
+      for (boolean td : row) {
+        if (td) {
+          count++;
+        }
+      }
+    }
+
+    return count;
   }
 }
