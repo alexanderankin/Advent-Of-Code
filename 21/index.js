@@ -36,6 +36,39 @@ function scramble(filename, done) {
       var sr     = assignedCommand.subroutine;
       var args   = assignedCommand.args;
 
+      console.log(sr);
+
+      return function(input) { return sr.apply(null, [input].concat(args))};
+    }).reduce(function function_name(string, next) {
+
+      console.log(next(string));
+
+      return next(string);
+    }, input);
+
+    done(null, output);
+  });
+}
+
+scramble('./test', function (err, result) {
+  console.log(result);
+});
+
+function unscramble(filename, done) {
+  getFileContents(filename, function (err, data) {
+    if (err) return done(err);
+
+    var lines = data.split('\n');
+    var input = lines.shift();
+    console.log('input is', (input = 'decab'));
+
+    lines.reverse();
+
+    var output = lines.map(function (line) {
+      var assignedCommand = assignCommand(line);
+      var sr     = assignedCommand.subroutine;
+      var args   = assignedCommand.args;
+
       return function(input) { return sr.apply(null, [input].concat(args))};
     }).reduce(function function_name(string, next) {
       return next(string);
@@ -45,6 +78,6 @@ function scramble(filename, done) {
   });
 }
 
-scramble('./input', function (err, result) {
-  console.log(result);
-});
+// unscramble('./test', function (err, result) {
+//   console.log(result);
+// });
