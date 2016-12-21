@@ -44,8 +44,14 @@ function rotate_number(input, direction, number) {
 // console.log(output);
 
 function rotate_based_on_p(input, letter) {
-  // body...
+  var idx = input.indexOf(letter);
+  input = rotate_number(input, 'right', idx + 1 + (idx >= 4 ? 1 : 0 ));
+  return input;
 }
+
+// var input  = "abcdefg"
+// var output = rotate_number(input, 'right', 3);
+// console.log(output);
 
 function reverse_from_to(input, from_idx, to_idx) {
   var arr = input.split('');
@@ -68,34 +74,34 @@ function insert(input, from_idx, to_idx) {
   return arr.join('');
 }
 
-var input  = "abcde";
-var output = insert(input, 1, 3);
-console.log(output);
+// var input  = "abcde";
+// var output = insert(input, 1, 3);
+// console.log(output);
 
 var command_expressions = {
   swap_p: {
     regex: /swap position ([\d]+) with position ([\d]+)/,
-    subroutine: null
+    subroutine: swap_positions
   },
   swap_l: {
     regex: /swap letter ([\w]) with letter ([\w])/,
-    subroutine: null
+    subroutine: swap_letters
   },
   rotate_n: {
     regex: /rotate (left|right) ([\d]+) step(s)*/,
-    subroutine: null
+    subroutine: rotate_number
   },
   rotate_p: {
     regex: /rotate based on position of letter ([\w])/,
-    subroutine: null
+    subroutine: rotate_based_on_p
   },
   reverse: {
     regex: /reverse positions ([\d]+) through ([\d]+)/,
-    subroutine: null
+    subroutine: reverse_from_to
   },
   insert: {
     regex: /move position ([\d]+) to position ([\d]+)/,
-    subroutine: null
+    subroutine: insert
   }
 };
 
