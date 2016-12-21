@@ -23,20 +23,28 @@ function assignCommand(line) {
   }
 }
 
-getFileContents('./input', function (err, data) {
-  var lines = data.split('\n');
-  var input = lines.shift();
-  console.log('input is', input);
+function scramble(filename, done) {
+  getFileContents(filename, function (err, data) {
+    if (err) return done(err);
 
-  var output = lines.map(function (line) {
-    var assignedCommand = assignCommand(line);
-    var sr     = assignedCommand.subroutine;
-    var args   = assignedCommand.args;
+    var lines = data.split('\n');
+    var input = lines.shift();
+    console.log('input is', input);
 
-    return function(input) { return sr.apply(null, [input].concat(args))};
-  }).reduce(function function_name(string, next) {
-    return next(string);
-  }, input);
+    var output = lines.map(function (line) {
+      var assignedCommand = assignCommand(line);
+      var sr     = assignedCommand.subroutine;
+      var args   = assignedCommand.args;
 
-  console.log(output);
+      return function(input) { return sr.apply(null, [input].concat(args))};
+    }).reduce(function function_name(string, next) {
+      return next(string);
+    }, input);
+
+    done(null, output);
+  });
+}
+
+scramble('./input', function (err, result) {
+  console.log(result);
 });
