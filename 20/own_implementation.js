@@ -10,6 +10,8 @@ function test_ip(ip, ranges) {
   /*console.log("ip", ip);
   console.log("ranges", ranges);*/
 
+  if (ip > 4294967295) { return false; }
+
   for (var i = 0; i < ranges.length; i++) {
     /*console.log("range0", ranges[i][0], "ip", ip,
       "range1", ranges[i][1]);*/
