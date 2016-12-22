@@ -50,15 +50,17 @@ function main(inputfilename) {
       return ival[1] + 1;
     });
 
+    console.log(
     minvals.filter(function (ip) {
       console.log("ip", ip, " passes test fn", 
         test_ip(ip, ivals));
       return test_ip(ip, ivals);
-    }).forEach(function (ip) {
+    }).map(function (ip) {
       console.log("ip", ip, "has passed.");
-      process.exit(0);
-    });
-    
+      // process.exit(0);  // part one
+    })
+    .length);
+
   });
 }
 
