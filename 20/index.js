@@ -20,11 +20,10 @@ function main() {
 
     // console.log(intervals);
     var minvalue = find_min_incl(intervals, Math.pow(2, 32) - 1);
-    console.log(minvalue);
+    console.log("minvalue", minvalue);
     // console.log(find_min_incl(intervals, 9));
     var ip = getipfromint(minvalue);
-    console.log("ip", ip);
-    console.log("ip", ip.join('.'));
+    console.log("ip", ip, ip.join('.'));
   });
 }
 
@@ -71,19 +70,42 @@ function find_min_incl(excl, max) {
     return a[0] - b[0];
   });
 
+  console.log(excl);
+
   var counter = 0;
-  var offset = 0;
-  while (true) {
+  var offset = -1;
+  while (offset++, true) {
+    // try {
+
+    /*console.log("offset", offset);
+    console.log(excl[offset][0]);*/
+
     if (excl[offset][0] <= counter) {
       counter += excl[offset][1] - excl[offset][0];
-      offset++;
+      counter += 1;
+      console.log("counter", counter);
+      continue;
     }
 
+    // } catch(e) { console.log(excl[offset]); console.log(excl); }
+
     // console.log("offset", offset);
-    console.log("counter", counter);
+    /*console.log("counter", counter);*/
     // console.log(excl[offset]);
+
+    /*var counterip = getipfromint(counter);
+    console.log("counterip", counterip);*/
+
+    // if (ipcontainszero(counterip)) {
+      // counter += excl[offset][1] - excl[offset][0];
+      // continue;
+    // }
     return counter;
   }
+}
+
+function ipcontainszero(ip) {
+  return ip.indexOf(0) != -1;
 }
 
 function getipfromint(int) {
