@@ -34,9 +34,14 @@ class Day05SupplyStacks {
     }
 
     String finalSurfaceAfterRearranging(String input) {
+        return finalSurfaceAfterRearranging(input, false);
+    }
+
+    String finalSurfaceAfterRearranging(String input, boolean multiple) {
         String[] rows = input.split("\\r?\\n");
         boolean parsingStacks = true;
         List<List<String>> stacks = new ArrayList<>();
+        List<String> multipleSpace = multiple ? new ArrayList<>() : null;
         for (String row : rows) {
             if (parsingStacks) {
                 if (!row.contains("[")) {
@@ -63,8 +68,21 @@ class Day05SupplyStacks {
                 int src = Integer.parseInt(matcher.group(2)) - 1;
                 int dest = Integer.parseInt(matcher.group(3)) - 1;
 
+                List<String> srcList = stacks.get(src);
+                List<String> destList = stacks.get(dest);
+                if (multiple) {
+                    multipleSpace.clear();
+                    for (int i = 0; i < count; i++) {
+                        multipleSpace.add(srcList.remove(srcList.size() - 1));
+                    }
+
+                    for (int i = 0; i < count; i++) {
+                        destList.add(multipleSpace.get(count - i - 1));
+                    }
+                    continue;
+                }
                 for (int i = 0; i < count; i++) {
-                    stacks.get(dest).add(stacks.get(src).remove(stacks.get(src).size() - 1));
+                    destList.add(srcList.remove(srcList.size() - 1));
                 }
             }
         }
@@ -81,5 +99,15 @@ class Day05SupplyStacks {
     @Test
     void submit_finalSurfaceAfterRearranging() {
         assertEquals("ZSQVCCJLL", finalSurfaceAfterRearranging(readValue()));
+    }
+
+    @Test
+    void test_finalSurfaceAfterRearrangingMultiple() {
+        assertEquals("MCD", finalSurfaceAfterRearranging(EXAMPLE_INPUT, true));
+    }
+
+    @Test
+    void submit_finalSurfaceAfterRearrangingMultiple() {
+        assertEquals("QZFJRWHGS", finalSurfaceAfterRearranging(readValue(), true));
     }
 }
