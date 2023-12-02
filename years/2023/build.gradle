@@ -5,6 +5,10 @@ plugins {
 repositories.mavenCentral()
 
 dependencies {
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    testImplementation 'commons-io:commons-io:2.15.0'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

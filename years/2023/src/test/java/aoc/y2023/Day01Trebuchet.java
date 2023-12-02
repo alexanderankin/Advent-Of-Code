@@ -1,12 +1,16 @@
 package aoc.y2023;
 
+import lombok.SneakyThrows;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,5 +51,14 @@ class Day01Trebuchet {
         List<Integer> integers = calibrationValues(input);
         assertEquals(List.of(12, 38, 15, 77), integers);
         assertEquals(142, integers.stream().mapToInt(Integer::intValue).sum());
+    }
+    
+    @SneakyThrows
+    @Test
+    void submit_calibrationValues() {
+        String input = IOUtils.toString(Objects.requireNonNull(getClass().getResourceAsStream("/p1.calibration-values.txt")), StandardCharsets.UTF_8);
+
+        int sum = calibrationValues(input).stream().mapToInt(Integer::intValue).sum();
+        assertEquals(54644, sum);
     }
 }
