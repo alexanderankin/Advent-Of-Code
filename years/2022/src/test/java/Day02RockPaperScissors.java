@@ -103,7 +103,7 @@ class Day02RockPaperScissors {
 
     @Test
     void submit_sumRounds() {
-        System.out.println(sumRounds(Arrays.asList(readValue().split("\n"))));
+        // System.out.println(sumRounds(Arrays.asList(readValue().split("\n"))));
         assertEquals(11603, sumRounds(Arrays.asList(readValue().split("\n"))));
     }
 
@@ -159,6 +159,7 @@ class Day02RockPaperScissors {
     @Test
     @SneakyThrows
     void submit_part2() {
-        System.out.println(part2(Arrays.asList(readValue().split("\n"))));
+        // System.out.println(part2(Arrays.asList(readValue().split("\n"))));
+        assertEquals(12725, part2(Arrays.asList(readValue().split("\n"))));
     }
 }
