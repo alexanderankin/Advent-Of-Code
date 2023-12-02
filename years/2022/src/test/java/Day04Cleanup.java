@@ -27,6 +27,14 @@ class Day04Cleanup {
     }
 
     boolean doesPairHaveOneFullyContainsAnother(String pairDescription) {
+        return doesPairHaveOneContainsAnother(pairDescription, true);
+    }
+
+    boolean doesPairHaveOneContainsAnotherAtAll(String pairDescription) {
+        return doesPairHaveOneContainsAnother(pairDescription, false);
+    }
+
+    boolean doesPairHaveOneContainsAnother(String pairDescription, boolean fully) {
         var m = PAIR_DESCRIPTION.matcher(pairDescription);
         if (!m.find()) throw new IllegalArgumentException();
         int a_start = Integer.parseInt(m.group(1));
@@ -35,11 +43,27 @@ class Day04Cleanup {
         int b_end = Integer.parseInt(m.group(4));
 
         boolean a_lower = (a_start + a_end) < (b_start + b_end);
-        
-        int l_start = a_lower ? a_start : b_start;
-        int l_end = a_lower ? a_end : b_end;
-        int h_start = a_lower ? b_start : a_start;
-        int h_end = a_lower ? b_end : a_end;
+
+        int l_start;
+        int l_end;
+        int h_start;
+        int h_end;
+
+        if (a_lower) {
+            l_start = Math.min(a_start, a_end);
+            l_end = Math.max(a_start, a_end);
+            h_start = Math.min(b_start, b_end);
+            h_end = Math.max(b_start, b_end);
+        } else {
+            l_start = Math.min(b_start, b_end);
+            l_end = Math.max(b_start, b_end);
+            h_start = Math.min(a_start, a_end);
+            h_end = Math.max(a_start, a_end);
+        }
+
+        if (!fully) {
+            return h_start <= l_end;
+        }
 
         if (l_start >= h_start) {
             //    bs..as ---- .....ae..be = 1; be..ae = 0
@@ -62,13 +86,30 @@ class Day04Cleanup {
         return (int) pairs.stream().filter(this::doesPairHaveOneFullyContainsAnother).count();
     }
 
+    int howManyPairsOverlapAtAll(List<String> pairs) {
+        return (int) pairs.stream().filter(this::doesPairHaveOneContainsAnotherAtAll).count();
+    }
+
     @Test
     void test_howManyPairsHaveOneFullyContainsAnother() {
         assertEquals(2, howManyPairsOverlap(Arrays.asList(EXAMPLE_INPUT.split("\\s"))));
     }
-    
+
     @Test
     void submitPart1() {
         assertEquals(560, howManyPairsOverlap(Arrays.asList(readValue().split("\\s"))));
+    }
+
+    @Test
+    void test_doesPairHaveOneContainsAnotherAtAll() {
+        String[] split = EXAMPLE_INPUT.split("\\s");
+        for (int i = 0; i < split.length; i++) {
+            assertEquals((i != 0 && i != 1), doesPairHaveOneContainsAnotherAtAll(split[i]), String.valueOf(i));
+        }
+    }
+
+    @Test
+    void submitPart2() {
+        assertEquals(839, howManyPairsOverlapAtAll(Arrays.asList(readValue().split("\\s"))));
     }
 }
