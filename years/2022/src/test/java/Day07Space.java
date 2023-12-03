@@ -38,6 +38,11 @@ class Day07Space {
             """;
 
     int sumDirectoryContentsOverLimit(String representation, int limit) {
+        Dir root = parse(representation);
+        return root.lsLAR().stream().mapToInt(Dir::sumFileSizes).filter(i -> i < limit).sum();
+    }
+
+    private Dir parse(String representation) {
         Dir root = new Dir();
         Dir current = root;
         boolean listing = false;
@@ -58,8 +63,7 @@ class Day07Space {
                 }
             }
         }
-
-        return root.lsLAR().stream().mapToInt(Dir::sumFileSizes).filter(i -> i < limit).sum();
+        return root;
     }
 
     @Test
@@ -67,10 +71,40 @@ class Day07Space {
         assertEquals(95437, sumDirectoryContentsOverLimit(EXAMPLE_INPUT, 100000));
     }
 
-    @SneakyThrows
     @Test
     void submit_sumDirectoryContentsOverLimit() {
-        assertEquals(1447046, sumDirectoryContentsOverLimit(new String(getClass().getResourceAsStream("/p7.txt").readAllBytes()), 100000));
+        assertEquals(1447046, sumDirectoryContentsOverLimit(readValue(), 100000));
+    }
+
+    @SneakyThrows
+    private String readValue() {
+        return new String(getClass().getResourceAsStream("/p7.txt").readAllBytes());
+    }
+
+    int findSmallestDirectoryToFreeEnoughSpace(String representation, int available, int needFree) {
+        var dir = parse(representation);
+        var total = dir.sumFileSizes();
+        int free = available - total;
+        var needMore = needFree - free;
+        return dir.lsLAR().stream()
+                .sorted(Comparator.comparing(Dir::sumFileSizes))
+                .dropWhile(i -> i.sumOfFileSizes < needMore)
+                .findAny()
+                .map(Dir::sumFileSizes).orElseThrow();
+    }
+
+    @Test
+    void test_findSmallestDirectoryToFreeEnoughSpace() {
+        assertEquals(24933642,
+                findSmallestDirectoryToFreeEnoughSpace(
+                        EXAMPLE_INPUT, 70000000, 30000000));
+    }
+
+    @Test
+    void submit_findSmallestDirectoryToFreeEnoughSpace() {
+        assertEquals(578710,
+                findSmallestDirectoryToFreeEnoughSpace(
+                        readValue(), 70000000, 30000000));
     }
 
     @Data
@@ -81,6 +115,7 @@ class Day07Space {
         transient Dir parent;
         Map<String, Dir> children;
         List<FileEnt> f;
+        transient Integer sumOfFileSizes;
 
         List<Dir> lsLAR() {
             ArrayList<Dir> cumulative = new ArrayList<>();
@@ -131,6 +166,7 @@ class Day07Space {
                     .values()
                     .stream()
                     .mapToInt(Dir::sumFileSizes).sum();
+            sumOfFileSizes = us + children;
             return us + children;
         }
 
