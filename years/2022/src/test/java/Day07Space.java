@@ -6,7 +6,6 @@ import lombok.experimental.Accessors;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.function.IntPredicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -60,23 +59,7 @@ class Day07Space {
             }
         }
 
-
-        // System.out.println(root);
-
-        // return root.children().values().stream().mapToInt(Dir::sumFileSizes).filter(i -> i > limit).sum();
-        int sum = 0;
-        for (Dir dir : root.lsLAR()) {
-            int i = dir.sumFileSizes();
-            if (i <= limit) {
-                sum += i;
-            }
-        }
-        return sum;
-
-        // return root.lsLAR().stream()
-        //         // .filter(dir -> dir.sumFileSizes() >= limit);
-        //         .mapToInt(Dir::sumFileSizes)
-        //         .sum();
+        return root.lsLAR().stream().mapToInt(Dir::sumFileSizes).filter(i -> i < limit).sum();
     }
 
     @Test
@@ -87,8 +70,7 @@ class Day07Space {
     @SneakyThrows
     @Test
     void submit_sumDirectoryContentsOverLimit() {
-        // 40572957 too high
-        System.out.println(sumDirectoryContentsOverLimit(new String(getClass().getResourceAsStream("/p7.txt").readAllBytes()), 100000));
+        assertEquals(1447046, sumDirectoryContentsOverLimit(new String(getClass().getResourceAsStream("/p7.txt").readAllBytes()), 100000));
     }
 
     @Data
