@@ -159,7 +159,7 @@ class Day03 {
 
     @Test
     void submit_part2() {
-        assertEquals(0, part2(parse(readValue())));
+        assertEquals(79842967, part2(parse(readValue())));
     }
 
     record NumberAt(int i, int j, int value) {
