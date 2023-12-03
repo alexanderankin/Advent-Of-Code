@@ -2,11 +2,9 @@ package aoc.y2023;
 
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,134 +22,78 @@ class Day03 {
             ...$.*....
             .664.598..
             """;
+    static final int[][] DIRECTIONS = new int[][]{
+            {1, 0},
+            {1, 1},
+            {0, 1},
+            {-1, 1},
+            {-1, 0},
+            {-1, -1},
+            {0, -1},
+            {1, -1}
+    };
 
-    int thing(String input) {
-        var matrix = parse(input);
-        // System.out.println(Arrays.deepToString(matrix));
+    @SneakyThrows
+    private String readValue() {
+        return new String(getClass().getResourceAsStream("/p3.txt").readAllBytes());
+    }
 
-        int length = matrix.length;
-        int width = matrix[0].length;
+    int part1(int[][] matrix) {
+        Set<NumberAt> numbers = new HashSet<>();
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                int value = matrix[i][j];
+                boolean isNum = value >= 0 && value <= 9;
 
-        List<Integer> numbers = new ArrayList<>();
-        int number = 0;
-        boolean inNumber = false;
-        boolean adjacent = false;
-
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < width; j++) {
-                var value = matrix[i][j];
-                if (inNumber) {
-                    if (value >= 0) {
-                        // must be only if number goes on, not after #'s stopped
-                        adjacent |= anySymbolsAround(matrix, i, j);
-                        number *= 10;
-                        number += value;
-                    } else {
-                        inNumber = false;
-                        // finish number
-                        if (adjacent) {
-                            numbers.add(number);
-                        }
-                        number = 0;
-                        adjacent = false;
-                    }
-                } else {
-                    if (value >= 0) {
-                        inNumber = true;
-                        number = value;
-                        adjacent = anySymbolsAround(matrix, i, j);
-                    }
+                if (!isNum && value != '.') {
+                    Set<NumberAt> adjacentNumbers = adjacentNumbers(matrix, i, j);
+                    numbers.addAll(adjacentNumbers);
                 }
             }
-
-            // if (adjacent && inNumber) {
-            //     numbers.add(number);
-            //     inNumber = false;
-            // }
         }
-
-        return numbers.stream().mapToInt(Integer::intValue).sum();
+        return numbers.stream().mapToInt(NumberAt::value).sum();
     }
 
-    private boolean anySymbolsAround(int[][] matrix, int i, int j) {
-        return read(matrix, i + 1, j) == -2 || read(matrix, i + 1, j) == -3 ||
-                read(matrix, i - 1, j) == -2 || read(matrix, i - 1, j) == -3 ||
-                read(matrix, i, j + 1) == -2 || read(matrix, i, j + 1) == -3 ||
-                read(matrix, i, j - 1) == -2 || read(matrix, i, j - 1) == -3 ||
-                read(matrix, i + 1, j + 1) == -2 || read(matrix, i + 1, j + 1) == -3 ||
-                read(matrix, i + 1, j - 1) == -2 || read(matrix, i + 1, j - 1) == -3 ||
-                read(matrix, i - 1, j + 1) == -2 || read(matrix, i - 1, j + 1) == -3 ||
-                read(matrix, i - 1, j - 1) == -2 || read(matrix, i - 1, j - 1) == -3;
-    }
-
-    private int[][] countNumbersAround(int[][] matrix, int i, int j) {
-        int[][] result = new int[8][2];
-        int resultPointer = 0;
-        if (read(matrix, i + 1, j) > 0) result[resultPointer++] = new int[]{i + 1, j};
-        if (read(matrix, i - 1, j) > 0) result[resultPointer++] = new int[]{i - 1, j};
-        if (read(matrix, i, j + 1) > 0) result[resultPointer++] = new int[]{i, j + 1};
-        if (read(matrix, i, j - 1) > 0) result[resultPointer++] = new int[]{i, j - 1};
-        if (read(matrix, i + 1, j + 1) > 0) result[resultPointer++] = new int[]{i + 1, j + 1};
-        if (read(matrix, i + 1, j - 1) > 0) result[resultPointer++] = new int[]{i + 1, j - 1};
-        if (read(matrix, i - 1, j + 1) > 0) result[resultPointer++] = new int[]{i - 1, j + 1};
-        if (read(matrix, i - 1, j - 1) > 0) result[resultPointer++] = new int[]{i - 1, j - 1};
-        return Arrays.copyOf(result, resultPointer);
-    }
-
-    List<Integer> allNumbersAround(int[][] matrix, int i, int j) {
-        List<NumberAt> numbers = new ArrayList<>();
-
-        if (read(matrix, i + 1, j) > 0) numbers.add(numberAt(matrix, i + 1, j));
-        if (read(matrix, i - 1, j) > 0) numbers.add(numberAt(matrix, i - 1, j));
-        if (read(matrix, i, j + 1) > 0) numbers.add(numberAt(matrix, i, j + 1));
-        if (read(matrix, i, j - 1) > 0) numbers.add(numberAt(matrix, i, j - 1));
-        if (read(matrix, i + 1, j + 1) > 0) numbers.add(numberAt(matrix, i + 1, j + 1));
-        if (read(matrix, i + 1, j - 1) > 0) numbers.add(numberAt(matrix, i + 1, j - 1));
-        if (read(matrix, i - 1, j + 1) > 0) numbers.add(numberAt(matrix, i - 1, j + 1));
-        if (read(matrix, i - 1, j - 1) > 0) numbers.add(numberAt(matrix, i - 1, j - 1));
-
-        return new HashSet<>(numbers).stream().map(NumberAt::number).toList();
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "2,38,828:511",
-            "7,58,613:899",
-            "13,18,745:209",
-            "17,36,347:524",
-            "19,84,856",
-            "16,86,628:343",
-    })
-    void test_allNumbersAround(int row, int col, String results) {
-        var expected = Arrays.stream(results.split(":")).map(Integer::parseInt).collect(Collectors.toSet());
-        var input = parse(readValue());
-
-        assertEquals(expected, new HashSet<>(allNumbersAround(input, row - 1, col - 1)));
-    }
-
-    private NumberAt numberAt(int[][] matrix, int i, int j) {
-        int[] row = matrix[i];
-        int jStart = j;
-        int jEnd = j;
-        while (jStart >= 0 && row[jStart] >= 0) jStart--;
-        jStart++;
-        while (jEnd < row.length && row[jEnd] >= 0) jEnd++;
-        jEnd--;
-
-        int result = 0;
-        for (int k = jStart; k <= jEnd; k++) {
-            result *= 10;
-            result += row[k];
+    private Set<NumberAt> adjacentNumbers(int[][] matrix, int i, int j) {
+        Set<NumberAt> result = new HashSet<>();
+        for (var dir : DIRECTIONS) {
+            int y = i - dir[0];
+            int x = j - dir[1];
+            if (y < 0 || y >= matrix.length || x < 0 || x >= matrix[0].length) continue;
+            var other = matrix[y][x];
+            if (other >= 0 && other <= 9) {
+                var row = matrix[y];
+                int min = x;
+                while (min >= 0 && row[min] >= 0 && row[min] <= 9) min--;
+                min++;
+                int max = x;
+                while (max < row.length && row[max] >= 0 && row[max] <= 9) max++;
+                max--;
+                int value = 0;
+                for (int k = min; k <= max; k++) {
+                    value *= 10;
+                    value += row[k];
+                }
+                result.add(new NumberAt(y, min, value));
+            }
         }
-        return new NumberAt(result, i, jStart);
+        return result;
     }
 
-    int read(int[][] matrix, int i, int j) {
-        try {
-            return matrix[i][j];
-        } catch (Exception e) {
-            return -10;
-        }
+    @Test
+    void test_adjacentNumbers() {
+        assertEquals(Set.of(),
+                adjacentNumbers(parse("""
+                        ....
+                        ....
+                        """), 1, 1));
+        assertEquals(Set.of(
+                        new NumberAt(0, 0, 12),
+                        new NumberAt(1, 2, 12)),
+                adjacentNumbers(parse("""
+                        12..
+                        ..12
+                        """), 1, 1));
     }
 
     private int[][] parse(String input) {
@@ -169,12 +111,12 @@ class Day03 {
                 char aChar = chars[j];
                 if (aChar >= '0' && aChar <= '9') {
                     result[i][j] = aChar - '0';
-                } else if (aChar == '.') {
-                    result[i][j] = -1;
-                } else if (aChar == '*') {
-                    result[i][j] = -3;
+                    // } else if (aChar == '.') {
+                    //     result[i][j] = -1;
+                    // } else if (aChar == '*') {
+                    //     result[i][j] = -3;
                 } else {
-                    result[i][j] = -2;
+                    result[i][j] = aChar;
                 }
             }
         }
@@ -182,206 +124,44 @@ class Day03 {
     }
 
     @Test
-    void testPart1() {
-        assertEquals(4361, thing(EXAMPLE_INPUT));
-    }
-
-    @SneakyThrows
-    private String readValue() {
-        return new String(getClass().getResourceAsStream("/p3.txt").readAllBytes());
+    void test_part1() {
+        assertEquals(4361, part1(parse(EXAMPLE_INPUT)));
     }
 
     @Test
-    void submitPart1() {
-        // 535391 if counting adjacent to after # end
-        assertEquals(532445, thing(readValue()));
-    }
-
-    @Test
-    void debugPart1() {
-        String input = """
-                311...672...
-                ............
-                ....411.....
-                ........*328
-                .....144....""";
-
-        int expected = /*672 + 411 +*/ 328 + 144;
-        assertEquals(expected, thing(input));
-    }
-
-    int part2(String s) {
-        return part2(parse(s));
+    void submit_part1() {
+        assertEquals(532445, part1(parse(readValue())));
     }
 
     int part2(int[][] matrix) {
-        // Set<Map.Entry<Integer, Integer>> seen = new HashSet<>();
-        int length = matrix.length;
-        int width = matrix[0].length;
         int result = 0;
-        int numStars = 0;
-        for (int i = 0; i < length; i++) {
-            for (int j = 0; j < width; j++) {
-                var value = matrix[i][j];
-                if (value == -3) {
-                    // int[][] numbersAdjacent = countNumbersAround(matrix, i, j);
-                    // int[][] filtered = filterOutExpandedToSameNumber(matrix, numbersAdjacent);
-                    var filtered = allNumbersAround(matrix, i, j).toArray(Integer[]::new);
-                    if (filtered.length == 2) {
-                        numStars++;
-                        var num0 = filtered[0];
-                        var num1 = filtered[1];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                int value = matrix[i][j];
+                boolean isNum = value >= 0 && value <= 9;
 
-                        // int num0Value = discoverNumber(matrix, num0);
-                        // int num1Value = discoverNumber(matrix, num1);
-
-                        // int ratio = num0Value * num1Value;
-                        int ratio = num0 * num1;
-                        result += ratio;
-                    }
+                if (!isNum && value != '.') {
+                    Set<NumberAt> adjacentNumbers = adjacentNumbers(matrix, i, j);
+                    if (adjacentNumbers.size() == 2)
+                        result += adjacentNumbers.stream()
+                                .mapToInt(NumberAt::value)
+                                .reduce(1, (a, b) -> a * b);
                 }
             }
-        }
-        System.out.println("numStars: " + numStars);
-        return result;
-    }
-
-    int[][] filterOutExpandedToSameNumber(int[][] matrix, int[][] numbersAdjacent) {
-        Set<Range> set = new HashSet<>();
-        int[][] expanded = new int[numbersAdjacent.length][];
-        int i = 0;
-        for (int[] ints : numbersAdjacent) {
-            var e = expandCoords(matrix, ints);
-            if (set.add(new Range(ints[0], e[0], e[1]))) {
-                expanded[i++] = ints;
-            }
-        }
-        return Arrays.copyOf(expanded, i);
-    }
-
-    int[] expandCoords(int[][] matrix, int[] coords) {
-        int start = coords[1];
-        int end = start;
-        // while (start > 0 && matrix[coords[0]][start - 1] >= 0) start--;
-        // while (end < matrix[0].length && matrix[coords[0]][end] >= 0) end++;
-        while (read(matrix, coords[0], start - 1) >= 0) start--;
-        while (read(matrix, coords[0], end) >= 0) end++;
-
-        return new int[]{start, end};
-    }
-
-    int discoverNumber(int[][] matrix, int[] coords) {
-        int start = coords[1];
-        int end = start;
-        // while (matrix[coords[0]][start - 1] >= 0) start--;
-        // while (matrix[coords[0]][end] >= 0) end++;
-        while (read(matrix, coords[0], start - 1) >= 0) start--;
-        while (read(matrix, coords[0], end) >= 0) end++;
-
-        int result = 0;
-        for (int i = start; i < end; i++) {
-            int next = matrix[coords[0]][i];
-            result *= 10;
-            result += next;
         }
         return result;
     }
 
     @Test
     void test_part2() {
-        assertEquals(467835, part2(EXAMPLE_INPUT));
+        assertEquals(467835, part2(parse(EXAMPLE_INPUT)));
     }
 
     @Test
     void submit_part2() {
-        // 61329094 too low
-        // 77069067 too low
-        // System.out.println(part2(readValue()));
-        assertEquals(79841031, part2(readValue()));
+        assertEquals(0, part2(parse(readValue())));
     }
 
-    @Test
-    void debug_part2() {
-        assertEquals(672 * 411 + 328 * 144,
-                part2("""
-                        311...672...
-                        .......*....
-                        ....411.....
-                        ........*328
-                        .....144...."""));
-
-        assertEquals(672 * 411/* + 328 * 144*/,
-                part2("""
-                        311...672...
-                        .......*....
-                        ....411.....
-                        .......*328.
-                        .....144...."""));
-
-        assertEquals(311 * 12 + 12 * 12 + 123 * 123,
-                part2("""
-                        311.......12
-                        *......*...*
-                        12........12
-                        .*11........
-                        1..123*123.."""));
-
-        assertEquals(144 * 3,
-                part2("""
-                        ...........*
-                        ..12*12...12
-                        ......*.....
-                        .....12*12..
-                        ............"""));
-        assertEquals(1,
-                part2("""
-                        ....1.......
-                        .....*......
-                        ......1.....
-                        ............"""));
-        assertEquals(1,
-                part2("""
-                        ....1.......
-                        .....*......
-                        ....1.......
-                        ............"""));
-        assertEquals(1,
-                part2("""
-                        ......1.....
-                        .....*......
-                        ....1.......
-                        ............"""));
-        assertEquals(1,
-                part2("""
-                        ....1.1.....
-                        .....*......
-                        ............"""));
-        assertEquals(1,
-                part2("""
-                        .....*......
-                        ....1.1.....
-                        ............"""));
-        assertEquals(1,
-                part2("""
-                        ....1*......
-                        ....1.......
-                        ............"""));
-        assertEquals(1,
-                part2("""
-                        ....*1......
-                        ....1.......
-                        ............"""));
-        assertEquals(1,
-                part2("""
-                        ....1.......
-                        ....1*......
-                        ............"""));
-        assertEquals(0, part2("............"));
-    }
-
-    record NumberAt(int number, int i, int j) {
-    }
-
-    record Range(int x1, int x2, int y) {
+    record NumberAt(int i, int j, int value) {
     }
 }
