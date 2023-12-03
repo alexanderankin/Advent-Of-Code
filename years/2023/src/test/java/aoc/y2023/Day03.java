@@ -219,6 +219,7 @@ class Day03 {
         int length = matrix.length;
         int width = matrix[0].length;
         int result = 0;
+        int numStars = 0;
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
                 var value = matrix[i][j];
@@ -227,6 +228,7 @@ class Day03 {
                     // int[][] filtered = filterOutExpandedToSameNumber(matrix, numbersAdjacent);
                     var filtered = allNumbersAround(matrix, i, j).toArray(Integer[]::new);
                     if (filtered.length == 2) {
+                        numStars++;
                         var num0 = filtered[0];
                         var num1 = filtered[1];
 
@@ -240,6 +242,7 @@ class Day03 {
                 }
             }
         }
+        System.out.println("numStars: " + numStars);
         return result;
     }
 
@@ -330,6 +333,50 @@ class Day03 {
                         ......*.....
                         .....12*12..
                         ............"""));
+        assertEquals(1,
+                part2("""
+                        ....1.......
+                        .....*......
+                        ......1.....
+                        ............"""));
+        assertEquals(1,
+                part2("""
+                        ....1.......
+                        .....*......
+                        ....1.......
+                        ............"""));
+        assertEquals(1,
+                part2("""
+                        ......1.....
+                        .....*......
+                        ....1.......
+                        ............"""));
+        assertEquals(1,
+                part2("""
+                        ....1.1.....
+                        .....*......
+                        ............"""));
+        assertEquals(1,
+                part2("""
+                        .....*......
+                        ....1.1.....
+                        ............"""));
+        assertEquals(1,
+                part2("""
+                        ....1*......
+                        ....1.......
+                        ............"""));
+        assertEquals(1,
+                part2("""
+                        ....*1......
+                        ....1.......
+                        ............"""));
+        assertEquals(1,
+                part2("""
+                        ....1.......
+                        ....1*......
+                        ............"""));
+        assertEquals(0, part2("............"));
     }
 
     record NumberAt(int number, int i, int j) {
