@@ -124,8 +124,13 @@ class Day07Space {
         }
 
         public int sumFileSizes() {
-            var us = Objects.requireNonNullElse(getF(), List.<FileEnt>of()).stream().mapToInt(FileEnt::getSize).sum();
-            var children = Objects.requireNonNullElse(getChildren(), Map.<String, Dir>of()).values().stream().mapToInt(Dir::sumFileSizes).sum();
+            var us = Objects.requireNonNullElse(getF(), List.<FileEnt>of())
+                    .stream()
+                    .mapToInt(FileEnt::getSize).sum();
+            var children = Objects.requireNonNullElse(getChildren(), Map.<String, Dir>of())
+                    .values()
+                    .stream()
+                    .mapToInt(Dir::sumFileSizes).sum();
             return us + children;
         }
 
