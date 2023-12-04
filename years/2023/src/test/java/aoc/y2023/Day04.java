@@ -114,6 +114,6 @@ class Day04 {
 
     @Test
     void submit_part2() {
-        System.out.println(part2(readValue()));
+        assertEquals(5539496, part2(readValue()));
     }
 }
