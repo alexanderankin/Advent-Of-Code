@@ -67,4 +67,53 @@ class Day04 {
     void submit_part1() {
         System.out.println(part1(readValue()));
     }
+
+    int part2(String representation) {
+        boolean[] matches = new boolean[100];
+
+        var cards = representation.split("\r?\n");
+
+        int[] frequencies = new int[cards.length];
+        for (int i = 0; i < cards.length; i++) {
+            var card = cards[i];
+            Arrays.fill(matches, false);
+
+            var values = card.split(":")[1];
+            var parts = values.split("\\|");
+            var winningNums = parts[0];
+            var numsYouHave = parts[1];
+
+            for (var win : winningNums.split("\\s")) {
+                if (win.isBlank()) continue;
+                matches[Integer.parseInt(win)] = true;
+            }
+
+            var power = -1;
+
+            for (var have : numsYouHave.split("\\s")) {
+                if (have.isBlank()) continue;
+                if (matches[Integer.parseInt(have)])
+                    power++;
+
+            }
+            power++;
+
+            int myFreq = frequencies[i] + 1;
+            for (int j = 0; j < power && j + 1 + i < frequencies.length; j++) {
+                frequencies[j + 1 + i] += myFreq;
+            }
+        }
+
+        return Arrays.stream(frequencies).sum() + frequencies.length;
+    }
+
+    @Test
+    void test_part2() {
+        assertEquals(30, part2(EXAMPLE_INPUT));
+    }
+
+    @Test
+    void submit_part2() {
+        System.out.println(part2(readValue()));
+    }
 }
