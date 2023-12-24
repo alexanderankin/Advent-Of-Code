@@ -2,6 +2,7 @@ package aoc.y2023;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -10,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -83,28 +85,13 @@ class Day05 {
     }
 
     long seedLocationLookup(Data data, long seedNumber) {
-        return lookupIntInData(
-                lookupIntInData(
-                        lookupIntInData(
-                                lookupIntInData(
-                                        lookupIntInData(
-                                                lookupIntInData(
-                                                        lookupIntInData(
-                                                                seedNumber,
-                                                                data.getParsed_seedToSoil()
-                                                        ),
-                                                        data.getParsed_soilToFertilizer()
-                                                ),
-                                                data.getParsed_fertilizerToWater()
-                                        ),
-                                        data.getParsed_waterToLight()
-                                ),
-                                data.getParsed_lightToTemperature()
-                        ),
-                        data.getParsed_temperatureToHumidity()
-                ),
-                data.getParsed_humidityToLocation()
-        );
+        long soil = lookupIntInData(seedNumber, data.getParsed_seedToSoil());
+        long fertilizer = lookupIntInData(soil, data.getParsed_soilToFertilizer());
+        long water = lookupIntInData(fertilizer, data.getParsed_fertilizerToWater());
+        long light = lookupIntInData(water, data.getParsed_waterToLight());
+        long temp = lookupIntInData(light, data.getParsed_lightToTemperature());
+        long hum = lookupIntInData(temp, data.getParsed_temperatureToHumidity());
+        return lookupIntInData(hum, data.getParsed_humidityToLocation());
     }
 
     @ParameterizedTest
@@ -176,7 +163,63 @@ class Day05 {
 
     @Test
     void submit_part1() {
-        System.out.println(part1(new Data(readValue())));
+        assertEquals(910845529, part1(new Data(readValue())));
+    }
+
+    long part2_naiveMemory(Data data) {
+        long[] seedNums = Arrays.stream(data.getLines()[0]
+                        .split(": ")[1]
+                        .split("\\s"))
+                .mapToLong(Long::parseLong)
+                .toArray();
+        // part 2 is now we consider this is as start/length ranges not 4 longs
+        long[] seedsInRange0 = LongStream.range(seedNums[0], seedNums[0] + seedNums[1]).toArray();
+        long[] seedsInRange2 = LongStream.range(seedNums[2], seedNums[2] + seedNums[3]).toArray();
+
+        long[] seeds = new long[seedsInRange0.length + seedsInRange2.length];
+        System.arraycopy(seedsInRange0, 0, seeds, 0, seedsInRange0.length);
+        System.arraycopy(seedsInRange2, 0, seeds, seedsInRange0.length, seedsInRange2.length);
+
+        long lowestLocation = seedLocationLookup(data, seeds[0]);
+        for (int i = 1; i < seeds.length; i++) {
+            long next = seedLocationLookup(data, seeds[i]);
+            if (next < lowestLocation) {
+                lowestLocation = next;
+            }
+        }
+        return lowestLocation;
+    }
+
+    long part2(Data data) { // naive computationally
+        long[] seeds = Arrays.stream(data.getLines()[0]
+                        .split(": ")[1]
+                        .split("\\s"))
+                .mapToLong(Long::parseLong)
+                .toArray();
+
+        long lowestLocation = seedLocationLookup(data, seeds[0]);
+
+        for (int i = 0; i < seeds.length; i+= 2) {
+            for (long j = seeds[i]; j < seeds[i] + seeds[i + 1]; j++) {
+                long next = seedLocationLookup(data, j);
+                if (next < lowestLocation) lowestLocation = next;
+            }
+        }
+        return lowestLocation;
+    }
+
+    @Test
+    void test_part2() {
+        assertEquals(46, part2(new Data(EXAMPLE_INPUT)));
+        assertEquals(46, part2_naiveMemory(new Data(EXAMPLE_INPUT)));
+    }
+
+    @Test
+    @Disabled("takes too long :) need to find a better solution")
+    void submit_part2() {
+        // 95461669 -- too high
+        // 77435348
+        assertEquals(77435348, part2(new Data(readValue())));
     }
 
     @lombok.Data
