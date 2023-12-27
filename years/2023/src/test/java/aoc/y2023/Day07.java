@@ -31,14 +31,6 @@ class Day07 {
         return new String(Day07.class.getResourceAsStream("/p7.txt").readAllBytes(), StandardCharsets.UTF_8);
     }
 
-    static Type typeOf(String cards) {
-        for (Type value : Type.VALUES) {
-            if (value.test(cards))
-                return value;
-        }
-        throw new IllegalStateException();
-    }
-
     @ParameterizedTest
     @CsvSource({
             "AAAAA,FIVE_OF_A_KIND",
@@ -50,18 +42,14 @@ class Day07 {
             "23456,HIGH_CARD",
     })
     void test_types(String cards, Type expected) {
-        assertEquals(expected, typeOf(cards));
+        assertEquals(expected, Player.typeOf(cards));
     }
 
     List<Player> parse(String input) {
         return Arrays.stream(input.split("\r?\n"))
                 .map(s -> s.split(" "))
-                .map(Player::new)
+                .map(Player::interpret)
                 .toList();
-    }
-
-    private Player getPlayer(String[] split) {
-        return new Player(split[0], Integer.parseInt(split[1]), typeOf(split[0]));
     }
 
     int partOne(String input) {
@@ -164,6 +152,7 @@ class Day07 {
     }
 
     record Player(String cards, int bet, Type type) {
+        private static final char[] CARD_VALUES = new char[]{'2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'};
         private static final int[] SPECIAL = new int[256];
         static final Comparator<Player> COMP = Comparator.comparing(Player::scoreRank)
                 .thenComparing(p -> normalize(p.cards.charAt(0)))
@@ -183,18 +172,41 @@ class Day07 {
             SPECIAL['T'] = 10;
         }
 
-        public Player(String[] split) {
-            this(split[0], Integer.parseInt(split[1]), typeOf(split[0]));
+        static Player interpret(String[] split) {
+            return new Player(split[0], Integer.parseInt(split[1]), typeOf(split[0]));
+        }
+
+        static Player interpretPartTwo(String[] split) {
+            return new Player(split[0], Integer.parseInt(split[1]), typeOfPartTwo(split[0]));
         }
 
         static Player betNothing(String s) {
-            return new Player(new String[]{s, "0"});
+            return Player.interpret(new String[]{s, "0"});
         }
 
         private static int normalize(char c) {
             int lookup = SPECIAL[c];
             if (lookup != 0) return lookup;
             throw new UnsupportedOperationException("failed to look up " + c);
+        }
+
+        static Type typeOf(String cards) {
+            for (Type value : Type.VALUES) {
+                if (value.test(cards))
+                    return value;
+            }
+            throw new IllegalStateException();
+        }
+
+        static Type typeOfPartTwo(String cards) {
+            var j = cards.indexOf('J');
+            if (j == -1)
+                return typeOf(cards);
+
+            Type min = typeOf(cards);
+            // ugh, can have multiple jokers.
+            // and also have to figure out the normalization difference - now J is lowest??
+            throw new UnsupportedOperationException("todo pick back up here");
         }
 
         int scoreRank() {
