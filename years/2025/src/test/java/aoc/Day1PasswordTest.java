@@ -1,16 +1,24 @@
 package aoc;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Day1PasswordTest {
 
-    Day1Password day1Password = new Day1Password();
+    Day1Password day1Password;
+
+    @BeforeEach
+    void setUp() {
+        day1Password = new Day1Password();
+    }
 
     @Test
     void test() {
-        var result = day1Password.password("""
+        var input = ("""
                 L68
                 L30
                 R48
@@ -21,12 +29,15 @@ class Day1PasswordTest {
                 L99
                 R14
                 L82""");
+        var result = day1Password.password(input);
         assertEquals(3, result);
+        day1Password.method = Day1Password.PasswordMethod.CLICKS_PAST_ZERO;
+        assertEquals(6, day1Password.password(input));
     }
 
     @Test
     void input() {
-        var result = day1Password.password("""
+        var input = """
                 R27
                 R13
                 L8
@@ -4571,7 +4582,34 @@ class Day1PasswordTest {
                 R3
                 R6
                 L15
-                L3""");
-        assertEquals(3, result);
+                L3""";
+        // assertEquals(1132, day1Password.password(input));
+
+        day1Password.method = Day1Password.PasswordMethod.CLICKS_PAST_ZERO;
+        // 6666 too high
+        // 6606 too low
+        assertEquals(6623, day1Password.password(input));
+    }
+
+    @Test
+    void stupid() {
+        day1Password.method =  Day1Password.PasswordMethod.CLICKS_PAST_ZERO;
+        assertEquals(10, day1Password.password("R1000"));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "'L50,R50',1",
+            "'L50,L50',1",
+            "'R50,L50',1",
+            "'R50,R50',1",
+            "'L150,L50',2",
+            "'L150,R50',2",
+            "'R150,L50',2",
+            "'R150,R50',2",
+    })
+    void test_extraCases(String input, int expected) {
+        day1Password.method = Day1Password.PasswordMethod.CLICKS_PAST_ZERO;
+        assertEquals(expected, day1Password.password(String.join("\n", input.split(","))));
     }
 }
