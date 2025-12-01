@@ -31,12 +31,12 @@ class Day1ListDistanceTest {
 
     @Test
     void testP2() {
-        assertEquals(11, day1.similarity(TEST_INPUT));
+        assertEquals(31, day1.similarity(TEST_INPUT));
     }
 
     @Test
     void inputP2() {
-        assertEquals(1879048, day1.similarity(INPUT));
+        assertEquals(21024792, day1.similarity(INPUT));
     }
 
 }

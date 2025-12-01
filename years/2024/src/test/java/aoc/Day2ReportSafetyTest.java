@@ -2,6 +2,8 @@ package aoc;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static aoc.TestUtils.read;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
