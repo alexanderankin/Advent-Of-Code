@@ -33,4 +33,13 @@ class Day4ForkliftOptimizerTest {
         assertEquals(0, day4.countAccessibleRolls(INPUT));
     }
 
+    @Test
+    void testP2() {
+        assertEquals(43, day4.countTotalAccessibleRolls(TEST_INPUT));
+    }
+
+    @Test
+    void inputP2() {
+        assertEquals(8451, day4.countTotalAccessibleRolls(INPUT));
+    }
 }
