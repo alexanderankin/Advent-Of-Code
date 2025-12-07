@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Day5IngredientCounter {
-    long count(String testInput) {
+    public long count(String testInput) {
         List<long[]> ranges = new ArrayList<>();
         List<Long> ingredients = new ArrayList<>();
         boolean firstHalf = true;
@@ -32,7 +32,7 @@ public class Day5IngredientCounter {
         return range[0] <= ingredient && ingredient <= range[1];
     }
 
-    long countRangeResult(String testInput) {
+    public long countRangeResult(String testInput) {
         List<long[]> ranges = new ArrayList<>();
         for (var iter = testInput.lines().iterator(); iter.hasNext(); ) {
             var line = iter.next();
