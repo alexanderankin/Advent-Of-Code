@@ -38,4 +38,15 @@ class Day7ManifoldAnalyzerTest {
     void input() {
         assertEquals(1533, day7.countSplits(INPUT));
     }
+
+    @Test
+    void testP2() {
+        assertEquals(40, day7.countPossibilities(TEST_INPUT));
+    }
+
+    @Test
+    void inputP2() {
+        // 405881186 - too low
+        assertEquals(405881186, day7.countPossibilities(INPUT));
+    }
 }
