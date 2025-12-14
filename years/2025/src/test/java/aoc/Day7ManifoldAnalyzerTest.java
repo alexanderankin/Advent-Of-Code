@@ -47,6 +47,8 @@ class Day7ManifoldAnalyzerTest {
     @Test
     void inputP2() {
         // 405881186 - too low
-        assertEquals(405881186, day7.countPossibilities(INPUT));
+        long result = day7.countPossibilities(INPUT);
+        assertEquals(405881186, (int) result);
+        assertEquals(10733529153890L, result);
     }
 }
