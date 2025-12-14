@@ -30,7 +30,7 @@ class Day4ForkliftOptimizerTest {
 
     @Test
     void input() {
-        assertEquals(0, day4.countAccessibleRolls(INPUT));
+        assertEquals(1395, day4.countAccessibleRolls(INPUT));
     }
 
     @Test
