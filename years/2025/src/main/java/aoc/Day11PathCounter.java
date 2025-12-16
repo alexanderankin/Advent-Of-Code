@@ -11,11 +11,11 @@ public class Day11PathCounter {
     public long countRoutesFromSvrToOutWithDacAndFft(Graph graph) {
         // proof both code paths work
         return graph.data.size() > 100
-                ? graph.numPathsThroughDacAndFftAi(new ArrayList<>(), "svr", "out")
+                ? graph.numPathsThroughDacAndFftAi("svr", "out")
                 : graph.numPathsThroughDacAndFft(new ArrayList<>(), "svr", "out");
     }
 
-    static class Graph {
+    public static class Graph {
         static final List<String> DAC_FFT = List.of("dac", "fft");
         static final String DAC = "dac";
         static final String FFT = "fft";
@@ -70,10 +70,8 @@ public class Day11PathCounter {
         }
 
         // ai code below here
-        long numPathsThroughDacAndFftAi(List<String> ignoredTaken, String from, String to) {
-            // ignoredTaken kept only to preserve original signature
-            Map<String, long[]> memo = new HashMap<>();
-            return numPathsThroughDacAndFftMemo(from, to, maskFor(from), memo);
+        long numPathsThroughDacAndFftAi(String from, String to) {
+            return numPathsThroughDacAndFftMemo(from, to, maskFor(from), new HashMap<>());
         }
 
         private long numPathsThroughDacAndFftMemo(String node, String to, int mask, Map<String, long[]> memo) {
